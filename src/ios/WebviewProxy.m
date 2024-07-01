@@ -27,6 +27,8 @@
     [stringToLoad appendString:url.path];
     NSString * method = urlSchemeTask.request.HTTPMethod;
     NSData * body = urlSchemeTask.request.HTTPBody;
+    // In case there's a file upload, it won't be accessible via HTTPBody so we need to get it as a HTTPBodyStream
+    NSInputStream *bodyStream = urlSchemeTask.request.HTTPBodyStream;
     
     // Add '/' for preventing status code 404 on xas requests. 
     if([stringToLoad hasSuffix:@"xas"]){
@@ -66,6 +68,9 @@
             [request setURL:requestUrl];
             if (body) {
                 [request setHTTPBody:body];
+            }
+            if (bodyStream) {
+                [request setHTTPBodyStream:bodyStream];
             }
             [request setAllHTTPHeaderFields:header];
             [request setHTTPShouldHandleCookies:YES];
